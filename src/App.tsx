@@ -1,14 +1,23 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useReducer } from 'react';
 import { menuItems } from './data/db';
 import MenuItem from './components/MenuItem';
 import OrderTotals from './components/OrderTotals';
 import OrderContents from './components/OrderContents';
 import TipPorcentajeForm from './components/TipPorcentajeForm';
-import useOrder from './hooks/useOrder';
+
+import { initialState, orderReducer } from './reducers/order-reducer';
 
 
 function App() {
-  const { addItem, order, tip, setTip, removeItem, increaseQuantity, decreaseQuantity, placeOrder } = useOrder();
+
+
+  const [state, dispatch] = useReducer(orderReducer, initialState);
+
+
+  useEffect(() => {
+    localStorage.setItem('order', JSON.stringify(state.order))
+  }, [state.order])
+
   return (
     <Fragment>
       <header className="bg-teal-500 py-10" >
@@ -25,34 +34,32 @@ function App() {
               <MenuItem
                 key={item.id}
                 item={item}
-                addItem={addItem}
+                dispatch={dispatch}
               />
             ))}
           </div>
         </div>
         <div className='w-full'>
           <div className="border border-dashed border-slate-300 rounded-lg space-y-10">
-            {order.length ? (
+            {state.order.length ? (
               <Fragment>
 
                 <OrderContents
-                  order={order}
-                  removeItem={removeItem}
-                  increaseQuantity={increaseQuantity}
-                  decreaseQuantity={decreaseQuantity}
+                  order={state.order}
+                  dispatch={dispatch}
                 />
                 <TipPorcentajeForm
-                  setTip={setTip}
-                  tip={tip}
+                  dispatch={dispatch}
+                  tip={state.tip}
                 />
 
                 <OrderTotals
-                  order={order}
-                  tip={tip}
-                  placeOrder={placeOrder}
+                  order={state.order}
+                  tip={state.tip}
+                  dispatch={dispatch}
                 />
               </Fragment>
-            ):(
+            ) : (
               <p className='text-center'> Orden vacía</p>
             )}
           </div>

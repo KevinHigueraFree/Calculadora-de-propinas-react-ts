@@ -1,10 +1,12 @@
+import  {Dispatch} from 'react';
 import { formatCurrency } from "../helpers"
 import { OrderItem } from "../types"
 import { MenuItem } from "../types"
+import { OrderActions } from '../reducers/order-reducer';
 
 type OrderContentProps = {
     order: OrderItem[],
-    removeItem: (item: MenuItem) => void,
+    dispatch: Dispatch<OrderActions>
     decreaseQuantity: (item: MenuItem) => void,
     increaseQuantity: (item: MenuItem) => void
 
@@ -12,7 +14,7 @@ type OrderContentProps = {
 }
 
 // el parametro que tome sera tipado como la propiedad order de el type OrderContentProps
-export default function OrderContents({ order, removeItem, decreaseQuantity, increaseQuantity
+export default function OrderContents({ order,dispatch
 }: OrderContentProps) {
     return (
         <div>
@@ -37,13 +39,13 @@ export default function OrderContents({ order, removeItem, decreaseQuantity, inc
                             <div className="flex flex-col gap-2">
                                 <button
                                     className="bg-green-500 h-8 w-8 mr-0 rounded-full text-white font-black"
-                                    onClick={() => increaseQuantity(item)}
+                                    onClick={() => dispatch({type:'increase-quantity',payload:{id:item.id}})}
                                 >
                                     +
                                 </button>
                                 <button
                                     className="bg-yellow-500 h-8 w-8 mr-0 rounded-full text-white font-black"
-                                    onClick={() => decreaseQuantity(item)}
+                                    onClick={() => dispatch({type:'decrease-quantity',payload:{id:item.id}})}
                                 >
                                     -
                                 </button>
@@ -52,7 +54,7 @@ export default function OrderContents({ order, removeItem, decreaseQuantity, inc
 
                                 <button
                                     className="bg-red-500 h-8 w-8 rounded-full text-white font-black"
-                                    onClick={() => removeItem(item)}
+                                    onClick={() => dispatch({type:'remove-item',payload:{id:item.id}})}
                                 >
                                     X
                                 </button>
